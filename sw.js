@@ -1,0 +1,5 @@
+const C='wimt-v1';const F=["./", "index.html", "live-train-status.html", "pnr-status.html", "trains-between-stations.html", "station-live-status.html", "seat-availability.html", "coach-position.html", "train-schedule.html", "platform-locator.html", "download-app.html", "features.html", "about.html", "faq.html", "contact.html", "privacy-policy.html", "terms.html", "disclaimer.html", "sitemap.html", "assets/css/style.css", "assets/js/app.js", "assets/js/config.js", "assets/img/logo.svg", "manifest.webmanifest"];
+self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(F)).then(()=>self.skipWaiting()))});
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET'||new URL(e.request.url).origin!==location.origin)return;
+e.respondWith(fetch(e.request).then(r=>{const cp=r.clone();caches.open(C).then(c=>c.put(e.request,cp));return r}).catch(()=>caches.match(e.request).then(m=>m||caches.match('index.html'))))});
