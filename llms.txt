@@ -1,11 +1,11 @@
 # Where Is My Train
 
-> Independent, free train information website and installable app: live running status, PNR status, trains between stations, station boards, seat availability, coach position, schedules and platforms. Content is in English and auto-translated in the browser to the visitor's language. Timetable data is an open snapshot (about 2016) from the Datameet community and may be outdated; live data links to official NTES and IRCTC.
+> Independent, free train information website and installable app: live running status, PNR status, trains between stations, station boards, seat availability, coach position, schedules and platforms. Content is in English and auto-translated in the browser to the visitor's language. Timetable data is the community Indian Railways GTFS feed (Aug 2026, unofficial) and may change; live data links to official NTES and IRCTC.
 
 ## Main tools
-- [Train Status & Timetable](https://tgm-global.github.io/whereismytrain/live-train-status.html): Train details and full timetable for 5,000+ trains.
+- [Train Status & Timetable](https://tgm-global.github.io/whereismytrain/live-train-status.html): Train details and full timetable for 10,000+ trains.
 - [PNR Status](https://tgm-global.github.io/whereismytrain/pnr-status.html): Open the official PNR enquiry for booking and berth status.
-- [Trains Between Stations](https://tgm-global.github.io/whereismytrain/trains-between-stations.html): Find direct trains between 7,000+ stations.
+- [Trains Between Stations](https://tgm-global.github.io/whereismytrain/trains-between-stations.html): Find direct trains between 8,500+ stations.
 - [Station Live Status](https://tgm-global.github.io/whereismytrain/station-live-status.html): Scheduled trains stopping at any station in the next hours.
 - [Seat Availability](https://tgm-global.github.io/whereismytrain/seat-availability.html): Check availability on the official IRCTC site.
 - [Coach Position](https://tgm-global.github.io/whereismytrain/coach-position.html): Find coach position using the official NTES.

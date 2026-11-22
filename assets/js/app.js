@@ -80,10 +80,13 @@
   function stationRows(code) { return getJSON('assets/data/st/' + code.slice(0, 2).toUpperCase() + '.json').then(function (o) { return (o && o[code]) || []; }); }
   function mm(m) { return m == null ? '--' : ('0' + Math.floor(m / 60) % 24).slice(-2) + ':' + ('0' + m % 60).slice(-2); }
   function dur(m) { return Math.floor(m / 60) + 'h ' + (m % 60) + 'm'; }
+  var DN = ['M', 'T', 'W', 'T', 'F', 'S', 'S'], DF = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  function daysHtml(b) { b = b || '1111111'; return '<span class="dys" title="' + (b === '1111111' ? 'Daily' : DF.filter(function (d, i) { return b[i] === '1'; }).join(', ')) + '">' + DN.map(function (d, i) { return '<i class="' + (b[i] === '1' ? 'on' : '') + '">' + d + '</i>'; }).join('') + '</span>'; }
+  function until(t) { var u = t[10]; return u ? '<p class="muted"><small>Schedule in the feed is valid until ' + u.slice(6) + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+u.slice(4, 6) - 1] + ' ' + u.slice(0, 4) + ' (special/limited run or feed window). Verify on NTES.</small></p>' : ''; }
   function qp(k) { return new URLSearchParams(location.search).get(k) || ''; }
-  var TYPES = { Raj: 'Rajdhani', Shtb: 'Shatabdi', SF: 'Superfast', Exp: 'Express', Mail: 'Mail', Pass: 'Passenger', Drnt: 'Duronto', Garib: 'Garib Rath', Jan: 'Jan Shatabdi', Humsafar: 'Humsafar', Rajya: 'Rajya Rani' };
+  var TYPES = { Raj: 'Rajdhani', Shtb: 'Shatabdi', SF: 'Superfast', Exp: 'Express', Mail: 'Mail', Pass: 'Passenger', Drnt: 'Duronto', Garib: 'Garib Rath', Jan: 'Jan Shatabdi', Humsafar: 'Humsafar', Rajya: 'Rajya Rani', VB: 'Vande Bharat', AB: 'Amrit Bharat', Tejas: 'Tejas', MEMU: 'MEMU', DEMU: 'DEMU', EMU: 'EMU', Local: 'Local', Spl: 'Special' };
   function typeName(t) { return TYPES[t] || t; }
-  var NOTE = '<p class="note">Timetable source: open data snapshot compiled by the Datameet community (about 2016). Timings and routes may have changed since; confirm with <a href="https://enquiry.indianrail.gov.in/ntes/" target="_blank" rel="noopener">NTES</a> before travel. Running days are not included.</p>';
+  var NOTE = '<p class="note">Timetable: Indian Railways community GTFS feed (unofficial), version 30 Aug 2026. Timings, halts and running days can change at short notice, so confirm with <a href="https://enquiry.indianrail.gov.in/ntes/" target="_blank" rel="noopener">NTES</a> before travel. Only halting stations are listed.</p>';
   var LIVE_NOTE = '<p class="note">Live running position, PNR, seat and platform data are not connected because Indian Railways has no free public data feed. Use the official <a href="https://enquiry.indianrail.gov.in/ntes/" target="_blank" rel="noopener">NTES</a> site for live information.</p>';
   function stName(m, c) { return (m.s[c] || c); }
   function sOpt(m, c) { return stName(m, c) + ' (' + c + ')'; }
@@ -136,9 +139,9 @@
         var halts = stops.filter(function (s) { return s[4]; }).length;
         out.innerHTML = '<div class="card"><h2 style="margin-top:0">' + t[0] + ' ' + esc(t[1]) + ' <span class="pill">' + esc(typeName(t[2])) + '</span></h2>' +
           '<p>' + esc(stName(m, t[3])) + ' (' + t[5] + ') → ' + esc(stName(m, t[4])) + ' (' + t[6] + ') · ' + t[7] + ' km · ' + halts + ' halts' + (t[8] ? ' · Return train <a href="live-train-status.html?train=' + t[8] + '">' + t[8] + '</a>' : '') + '</p>' +
-          '<div id="xtra"></div><label style="display:flex;gap:8px;align-items:center;font-weight:600"><input type="checkbox" id="allst" style="width:auto"> Show passing stations (' + stops.length + ')</label><div id="tt">' + timetable(m, t, stops, false) + '</div>' + NOTE +
+          '<p><b>Runs on:</b> ' + daysHtml(t[9]) + '</p>' + until(t) + '<div id="xtra"></div>' + (halts < stops.length ? '<label style="display:flex;gap:8px;align-items:center;font-weight:600"><input type="checkbox" id="allst" style="width:auto"> Show passing stations (' + stops.length + ')</label>' : '') + '<div id="tt">' + timetable(m, t, stops, false) + '</div>' + NOTE +
           '<p><a class="btn ghost" href="coach-position.html">Coach position</a> <a class="btn ghost" href="seat-availability.html">Seats</a> <a class="btn ghost" href="pnr-status.html">PNR</a></p></div>';
-        $('#allst').addEventListener('change', function (e) { $('#tt').innerHTML = timetable(m, t, stops, e.target.checked); });
+        if ($('#allst')) $('#allst').addEventListener('change', function (e) { $('#tt').innerHTML = timetable(m, t, stops, e.target.checked); });
         if (extra) extra(t, $('#xtra'));
       });
     });
@@ -175,11 +178,11 @@
           var bm = {}; r[1].forEach(function (x) { bm[x[0]] = x; });
           var rs = r[0].filter(function (x) { return bm[x[0]] && bm[x[0]][1] > x[1]; }).map(function (x) {
             var y = bm[x[0]], dep = x[3] != null ? x[3] : x[2], arr = y[2] != null ? y[2] : y[3];
-            return { t: m._ix[x[0]], dep: dep, arr: arr, d: y[4] - x[4], m: (y[4] - x[4]) * 1440 + arr - dep };
+            return { t: m._ix[x[0]], dep: dep % 1440, arr: arr % 1440, d: Math.floor(arr / 1440) - Math.floor(dep / 1440), m: arr - dep };
           }).filter(function (x) { return x.t && x.m > 0; }).sort(function (p, q) { return p.dep - q.dep; });
           out.innerHTML = '<div class="card"><h2 style="margin-top:0">' + esc(stName(m, a)) + ' → ' + esc(stName(m, b)) + ' (' + rs.length + ' trains)</h2>' +
-            (rs.length ? '<div class="scroll"><table class="tbl"><tr><th>Train</th><th>Type</th><th>Dep</th><th>Arr</th><th>Duration</th></tr>' + rs.map(function (x) {
-              return '<tr><td>' + trainLink(x.t) + '</td><td>' + esc(typeName(x.t[2])) + '</td><td>' + mm(x.dep) + '</td><td>' + mm(x.arr) + (x.d ? ' <small>(+' + x.d + 'd)</small>' : '') + '</td><td>' + dur(x.m) + '</td></tr>'; }).join('') + '</table></div>' : '<p class="empty">No direct trains found in the dataset for this pair.</p>') + NOTE + '</div>';
+            (rs.length ? '<div class="scroll"><table class="tbl"><tr><th>Train</th><th>Type</th><th>Runs</th><th>Dep</th><th>Arr</th><th>Duration</th></tr>' + rs.map(function (x) {
+              return '<tr><td>' + trainLink(x.t) + '</td><td>' + esc(typeName(x.t[2])) + '</td><td>' + daysHtml(x.t[9]) + '</td><td>' + mm(x.dep) + '</td><td>' + mm(x.arr) + (x.d ? ' <small>(+' + x.d + 'd)</small>' : '') + '</td><td>' + dur(x.m) + '</td></tr>'; }).join('') + '</table></div>' : '<p class="empty">No direct trains found in the dataset for this pair.</p>') + NOTE + '</div>';
         });
       });
     }
@@ -196,11 +199,17 @@
         var c = parseStation(m, $('#st').value); if (!c) { out.innerHTML = '<div class="card empty">Pick a station from the suggestions.</div>'; return; }
         var hrs = +$('#win').value, d = new Date(), now = d.getHours() * 60 + d.getMinutes();
         stationRows(c).then(function (rows) {
-          var rs = rows.map(function (x) { var tm = x[3] != null ? x[3] : x[2], diff = (tm - now + 1440 + 15) % 1440 - 15; return { x: x, tm: tm, diff: diff }; })
-            .filter(function (r) { return r.tm != null && r.diff <= hrs * 60; }).sort(function (p, q) { return p.diff - q.diff; });
-          out.innerHTML = '<div class="card"><h2 style="margin-top:0">' + esc(stName(m, c)) + ' – scheduled in next ' + hrs + ' h</h2>' + (rs.length ? '<div class="scroll"><table class="tbl"><tr><th>Train</th><th>Arr</th><th>Dep</th><th></th></tr>' + rs.map(function (r) {
-            var t = m._ix[r.x[0]]; if (!t) return ''; return '<tr><td>' + trainLink(t) + '</td><td>' + mm(r.x[2]) + '</td><td>' + mm(r.x[3]) + '</td><td>' + (r.x[1] === 0 ? '<small>starts</small>' : r.x[1] === r.x[5] - 1 ? '<small>ends</small>' : '') + '</td></tr>'; }).join('') + '</table></div>' : '<p class="empty">No scheduled trains in this window.</p>') +
-            '<p class="note">Scheduled times of trains that stop here; trains may not run every day, and delays are not shown. For live arrivals use <a href="https://enquiry.indianrail.gov.in/ntes/" target="_blank" rel="noopener">NTES</a>.</p></div>';
+          var rs = rows.map(function (x) { var tm = x[3] != null ? x[3] : x[2], diff = tm == null ? 9999 : (tm % 1440 - now + 1440 + 15) % 1440 - 15; return { x: x, tm: tm, diff: diff }; })
+            .filter(function (r) {
+              if (r.tm == null || r.diff > hrs * 60) return false;
+              var t = m._ix[r.x[0]]; if (!t || !t[9]) return true;
+              var ev = new Date(d.getTime() + r.diff * 60000); ev.setHours(0, 0, 0, 0);
+              var st = new Date(ev.getTime() - Math.floor(r.tm / 1440) * 86400000);   /* date the train started its journey */
+              return t[9][(st.getDay() + 6) % 7] === '1';
+            }).sort(function (p, q) { return p.diff - q.diff; });
+          out.innerHTML = '<div class="card"><h2 style="margin-top:0">' + esc(stName(m, c)) + ' – scheduled in next ' + hrs + ' h <small class="muted">(trains running today)</small></h2>' + (rs.length ? '<div class="scroll"><table class="tbl"><tr><th>Train</th><th>Arr</th><th>Dep</th><th></th></tr>' + rs.map(function (r) {
+            var t = m._ix[r.x[0]]; if (!t) return ''; return '<tr><td>' + trainLink(t) + '</td><td>' + mm(r.x[2]) + '</td><td>' + mm(r.x[3]) + '</td><td>' + (r.x[1] === 0 ? '<small>starts</small>' : r.x[1] === r.x[4] - 1 ? '<small>ends</small>' : '') + '</td></tr>'; }).join('') + '</table></div>' : '<p class="empty">No scheduled trains in this window.</p>') +
+            '<p class="note">Scheduled times of trains that stop here; only trains running on the day are listed, and delays are not shown. For live arrivals use <a href="https://enquiry.indianrail.gov.in/ntes/" target="_blank" rel="noopener">NTES</a>.</p></div>';
         });
       });
     });
