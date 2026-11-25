@@ -1,0 +1,13 @@
+{
+  "site_url": "https://tgm-global.github.io/whereismytrain",
+  "brand": "Where Is My Train",
+  "owner": "TGM Global",
+  "github_repo": "tgm-global/whereismytrain",
+  "feed_page": "https://mobilitydatabase.org/feeds/gtfs/mdb-2867",
+  "google_site_verification": "",
+  "bing_site_verification": "",
+  "min_station_trains": 5,
+  "min_route_trains": 3,
+  "max_routes": 3000,
+  "route_hub_min_trains": 60
+}

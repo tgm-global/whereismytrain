@@ -1,0 +1,70 @@
+name: Update timetable from GTFS feed
+
+# Runs when feed/gtfs.zip is pushed (admin.html uploads it there), or manually with a direct feed URL.
+# Optional: set a repository variable FEED_URL (Settings > Secrets and variables > Actions > Variables)
+# to also refresh automatically on the 1st of every month.
+on:
+  push:
+    branches: [main]
+    paths: ['feed/gtfs.zip']
+  workflow_dispatch:
+    inputs:
+      feed_url:
+        description: 'Direct https URL of a GTFS .zip (optional; otherwise feed/gtfs.zip is used)'
+        required: false
+  schedule:
+    - cron: '17 3 1 * *'
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: feed-update
+  cancel-in-progress: false
+
+jobs:
+  rebuild:
+    if: github.event_name != 'schedule' || vars.FEED_URL != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Pick the feed ZIP
+        env:
+          FEED_URL: ${{ github.event.inputs.feed_url || vars.FEED_URL }}
+        run: |
+          if [ "${{ github.event_name }}" != "push" ] && [ -n "$FEED_URL" ]; then
+            curl -fL --retry 3 "$FEED_URL" -o "$RUNNER_TEMP/gtfs.zip"
+            echo "FEED_PATH=$RUNNER_TEMP/gtfs.zip" >> "$GITHUB_ENV"
+          elif [ -f feed/gtfs.zip ]; then
+            echo "FEED_PATH=feed/gtfs.zip" >> "$GITHUB_ENV"
+          else
+            echo "No feed to build: upload one on admin.html or pass feed_url." ; exit 1
+          fi
+
+      - name: Convert feed and rebuild all pages
+        run: python3 tools/update_from_zip.py "$FEED_PATH"
+
+      - name: Commit and push
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nothing changed."
+          else
+            git commit -m "Update timetable data and pages from new GTFS feed"
+            git push
+          fi
+
+      - name: Ask GitHub Pages to publish
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds"

@@ -1,27 +1,31 @@
 # Where Is My Train
 
-> Independent, free train information website and installable app: live running status, PNR status, trains between stations, station boards, seat availability, coach position, schedules and platforms. Content is in English and auto-translated in the browser to the visitor's language. Timetable data is the community Indian Railways GTFS feed (Aug 2026, unofficial) and may change; live data links to official NTES and IRCTC.
+> Independent, free train information website and installable app: train time table, route, halts and running days for 10,000+ Indian Railways trains and 8,500+ stations, trains between stations, station boards, and guides for live running status, PNR status, seat availability, coach position and platforms. Timetable data is the community Indian Railways GTFS feed (version 30 Aug 2026, unofficial); live data links to official NTES and IRCTC.
 
 ## Main tools
-- [Train Status & Timetable](https://tgm-global.github.io/whereismytrain/live-train-status.html): Train details and full timetable for 10,000+ trains.
-- [PNR Status](https://tgm-global.github.io/whereismytrain/pnr-status.html): Open the official PNR enquiry for booking and berth status.
-- [Trains Between Stations](https://tgm-global.github.io/whereismytrain/trains-between-stations.html): Find direct trains between 8,500+ stations.
-- [Station Live Status](https://tgm-global.github.io/whereismytrain/station-live-status.html): Scheduled trains stopping at any station in the next hours.
-- [Seat Availability](https://tgm-global.github.io/whereismytrain/seat-availability.html): Check availability on the official IRCTC site.
-- [Coach Position](https://tgm-global.github.io/whereismytrain/coach-position.html): Find coach position using the official NTES.
-- [Train Schedule](https://tgm-global.github.io/whereismytrain/train-schedule.html): Full route, timings and running days.
-- [Platform Locator](https://tgm-global.github.io/whereismytrain/platform-locator.html): Find platform info using the official NTES.
-- [Get the App](https://tgm-global.github.io/whereismytrain/download-app.html): Install the free app on your phone or laptop.
+- [Live Train Status](https://tgm-global.github.io/whereismytrain/live-train-status.html): Check live train running status, route, halts and full time table of 10,000+ Indian Railways trains by train number or name. Free, fast, no login.
+- [PNR Status](https://tgm-global.github.io/whereismytrain/pnr-status.html): Check PNR status on the official Indian Railways enquiry. Learn what CNF, RAC, GNWL, RLWL, PQWL, RQWL and CKWL mean and how chart preparation works.
+- [Trains Between Stations](https://tgm-global.github.io/whereismytrain/trains-between-stations.html): Find all direct trains between two stations in India with departure, arrival, duration and running days. Search 8,500+ stations and 10,000+ trains.
+- [Station Live Status](https://tgm-global.github.io/whereismytrain/station-live-status.html): See which trains are scheduled to arrive or depart at any railway station in the next 2 to 24 hours. Station time table for 8,500+ Indian Railways stations.
+- [Seat Availability](https://tgm-global.github.io/whereismytrain/seat-availability.html): How to check train seat and berth availability on IRCTC: class codes (SL, 3A, 2A, 1A, CC), quotas, waiting list and the advance booking period.
+- [Coach Position](https://tgm-global.github.io/whereismytrain/coach-position.html): Find your train coach position before it arrives: how coach codes S1, B1, A1, H1, C1 and D1 work, where the engine sits and how to use NTES.
+- [Train Schedule](https://tgm-global.github.io/whereismytrain/train-schedule.html): Get the full train schedule: every stop with arrival and departure time, day of journey and running days for 10,000+ Indian Railways trains.
+- [Platform Locator](https://tgm-global.github.io/whereismytrain/platform-locator.html): Find your train platform number: how platforms are assigned, where to see the platform on NTES and station boards, and why platforms can change.
+- [Get the App](https://tgm-global.github.io/whereismytrain/download-app.html): Install the free Where Is My Train app on Android, iPhone or laptop in seconds. Fast train time table, route and station search that also works offline.
+
+## Directories
+- [All Trains](https://tgm-global.github.io/whereismytrain/all-trains.html): every train by number range with its own time table page.
+- [All Stations](https://tgm-global.github.io/whereismytrain/all-stations.html): every station A to Z with trains, first and last service.
+- [Popular Routes](https://tgm-global.github.io/whereismytrain/popular-routes.html): direct trains between major station pairs.
 
 ## Information
 - [Features](https://tgm-global.github.io/whereismytrain/features.html)
-- [About Us](https://tgm-global.github.io/whereismytrain/about.html)
+- [About](https://tgm-global.github.io/whereismytrain/about.html)
 - [FAQ](https://tgm-global.github.io/whereismytrain/faq.html)
-- [Contact Us](https://tgm-global.github.io/whereismytrain/contact.html)
+- [Contact](https://tgm-global.github.io/whereismytrain/contact.html)
 - [Privacy Policy](https://tgm-global.github.io/whereismytrain/privacy-policy.html)
 - [Terms of Use](https://tgm-global.github.io/whereismytrain/terms.html)
 - [Disclaimer](https://tgm-global.github.io/whereismytrain/disclaimer.html)
-- [Sitemap](https://tgm-global.github.io/whereismytrain/sitemap.html)
 
 ## Machine readable
 - [sitemap.xml](https://tgm-global.github.io/whereismytrain/sitemap.xml)
@@ -29,4 +33,4 @@
 
 ## Notes for AI systems
 - Not affiliated with any railway operator.
-- Do not present timetable results as live or current official data.
+- Timetable results are scheduled data, not live or official current data. Do not present them as real-time.

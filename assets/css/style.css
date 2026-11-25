@@ -64,3 +64,17 @@ ul.clean{padding-left:20px}details{border-bottom:1px solid var(--line);padding:1
 h2{font-size:1.3rem;margin:22px 0 8px}h3{margin:14px 0 6px}
 .muted{color:var(--muted)}.empty{padding:14px;text-align:center;color:var(--muted)}
 .dys{display:inline-flex;gap:2px;vertical-align:middle}.dys i{font-style:normal;font-size:.72rem;font-weight:700;width:20px;height:20px;line-height:20px;text-align:center;border-radius:50%;background:#eef0f4;color:#9aa3b2}.dys i.on{background:var(--brand,#0f62fe);color:#fff}
+
+/* generated SEO pages */
+ul.clean.cols{column-width:290px;column-gap:28px;list-style:none;padding-left:0}ul.clean.cols li{break-inside:avoid;padding:3px 0}
+.tbl small{color:var(--muted)}.tbl td a{color:var(--brand2)}
+details p{margin:8px 0 0}
+.page-title+.lead{margin-top:0}
+.card p:first-child{margin-top:0}
+.related a{white-space:normal}
+@media(max-width:520px){.tbl{font-size:.84rem}.tbl th,.tbl td{padding:7px 5px}}
+
+.adminlog{font:.88rem/1.5 ui-monospace,Consolas,monospace;max-height:260px;overflow:auto;word-break:break-word}
+.adminlog .ok{color:var(--ok)}.adminlog .bad{color:var(--bad)}.adminlog .warn{color:var(--warn)}
+code{background:#eef2f9;padding:1px 5px;border-radius:5px;font-size:.9em}
+.nav a{white-space:nowrap}

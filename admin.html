@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en" data-base="">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Update timetable data | Where Is My Train</title>
+<meta name="description" content="Upload a new GTFS feed to refresh the timetable data.">
+<meta name="keywords" content="admin">
+<meta name="robots" content="noindex,nofollow">
+<link rel="canonical" href="https://tgm-global.github.io/whereismytrain/admin.html"><meta name="theme-color" content="#0f62fe"><meta name="author" content="TGM Global">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Where Is My Train"><meta property="og:locale" content="en_IN"><meta property="og:title" content="Update timetable data | Where Is My Train"><meta property="og:description" content="Upload a new GTFS feed to refresh the timetable data."><meta property="og:url" content="https://tgm-global.github.io/whereismytrain/admin.html"><meta property="og:image" content="https://tgm-global.github.io/whereismytrain/assets/img/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://tgm-global.github.io/whereismytrain/assets/img/og-image.png">
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="assets/img/logo.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="assets/img/icon-192.png">
+<link rel="stylesheet" href="assets/css/style.css"></head>
+<body data-page="admin">
+<header class="site-header"><div class="wrap"><a class="brand notranslate" href="index.html"><img src="assets/img/logo.svg" alt="" width="34" height="34">WhereIsMyTrain</a>
+<button class="menu-btn" id="menuBtn" aria-label="Menu">☰</button>
+<nav class="nav" id="mainNav" aria-label="Main"><a href="index.html" class="">Home</a><a href="live-train-status.html" class="">Live Status</a><a href="pnr-status.html" class="">PNR</a><a href="trains-between-stations.html" class="">Trains</a><a href="station-live-status.html" class="">Station</a><a href="seat-availability.html" class="">Seats</a><a href="download-app.html" class="">App</a><select class="lang notranslate" id="langSel" aria-label="Language"></select></nav></div></header>
+<div id="gt_el"></div>
+<main><div class="wrap"><h1 class="page-title">Update timetable data</h1>
+<p class="lead">Upload a new GTFS feed and the site rebuilds itself: data files, every train, station and route page, sitemaps and the app cache.</p>
+<div class="card"><h2 style="margin-top:0">How it works</h2><ol>
+<li>Download the latest feed ZIP from the <a href="https://mobilitydatabase.org/feeds/gtfs/mdb-2867" target="_blank" rel="noopener">Mobility Database feed page</a> (button &ldquo;Download latest dataset&rdquo;).</li>
+<li>Choose that ZIP below. It is checked in your browser first.</li>
+<li>Press <b>Upload and rebuild</b>. The ZIP is committed to your GitHub repository and a GitHub Action converts it and republishes the site (usually 3 to 8 minutes).</li></ol>
+<p class="muted"><small>You need a GitHub token once: GitHub &rarr; Settings &rarr; Developer settings &rarr; Fine-grained tokens &rarr; repository access: only this repo &rarr; permissions <b>Contents: Read and write</b> and <b>Actions: Read and write</b>. The token is used only to talk to api.github.com from this page.</small></p></div>
+<form id="af" data-repo="tgm-global/whereismytrain" class="card" autocomplete="off">
+<h2 style="margin-top:0">Upload a feed ZIP</h2>
+<div class="f"><div><label for="repo">GitHub repository</label><input id="repo" placeholder="owner/name"></div><div><label for="branch">Branch</label><input id="branch" placeholder="main"></div></div>
+<div style="margin-top:12px"><label for="token">GitHub token</label><input id="token" type="password" placeholder="github_pat_…" autocomplete="off"><label style="font-weight:500;margin-top:6px"><input id="remember" type="checkbox" style="width:auto"> Remember the token in this browser</label></div>
+<div style="margin-top:12px"><label for="zip">GTFS feed (.zip)</label><input id="zip" type="file" accept=".zip,application/zip"><small class="muted" id="fname"></small></div>
+<div id="zipinfo" style="margin-top:10px"></div>
+<p style="margin-top:14px"><button class="btn" id="go" type="submit">Upload and rebuild</button></p>
+<hr style="border:0;border-top:1px solid var(--line);margin:18px 0">
+<h3 style="margin-top:0">Or: rebuild from a direct feed link</h3>
+<p class="muted">Paste the direct download link of the feed ZIP (copy it from the Mobility Database download button). GitHub downloads it itself, so you do not need to upload a large file.</p>
+<div class="f"><div><label for="feedurl">Feed ZIP URL</label><input id="feedurl" type="url" placeholder="https://…/latest.zip"></div><div><button class="btn ghost" id="go2" type="button">Rebuild from link</button></div></div>
+</form>
+<div class="card"><h3 style="margin-top:0">Progress</h3><div id="log" class="adminlog" aria-live="polite"><span class="muted">Nothing yet.</span></div></div>
+</div><script src="assets/js/admin.js"></script></main>
+<button class="to-en notranslate" id="toEn" type="button">🌐 View in English</button>
+<footer class="site-footer"><div class="wrap"><nav class="links" aria-label="Footer"><a href="about.html">About</a><a href="features.html">Features</a><a href="all-trains.html">All Trains</a><a href="all-stations.html">All Stations</a><a href="faq.html">FAQ</a><a href="contact.html">Contact</a><a href="privacy-policy.html">Privacy</a><a href="terms.html">Terms</a><a href="disclaimer.html">Disclaimer</a><a href="sitemap.html">Sitemap</a></nav><span class="copy">© 2026 TGM Global</span></div></footer>
+<script src="assets/js/config.js"></script><script src="assets/js/app.js"></script></body></html>

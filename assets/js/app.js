@@ -86,7 +86,7 @@
   function qp(k) { return new URLSearchParams(location.search).get(k) || ''; }
   var TYPES = { Raj: 'Rajdhani', Shtb: 'Shatabdi', SF: 'Superfast', Exp: 'Express', Mail: 'Mail', Pass: 'Passenger', Drnt: 'Duronto', Garib: 'Garib Rath', Jan: 'Jan Shatabdi', Humsafar: 'Humsafar', Rajya: 'Rajya Rani', VB: 'Vande Bharat', AB: 'Amrit Bharat', Tejas: 'Tejas', MEMU: 'MEMU', DEMU: 'DEMU', EMU: 'EMU', Local: 'Local', Spl: 'Special' };
   function typeName(t) { return TYPES[t] || t; }
-  var NOTE = '<p class="note">Timetable: Indian Railways community GTFS feed (unofficial), version 30 Aug 2026. Timings, halts and running days can change at short notice, so confirm with <a href="https://enquiry.indianrail.gov.in/ntes/" target="_blank" rel="noopener">NTES</a> before travel. Only halting stations are listed.</p>';
+  var NOTE = '<p class="note">Timetable: Indian Railways community GTFS feed (unofficial). Timings, halts and running days can change at short notice, so confirm with <a href="https://enquiry.indianrail.gov.in/ntes/" target="_blank" rel="noopener">NTES</a> before travel. Only halting stations are listed.</p>';
   var LIVE_NOTE = '<p class="note">Live running position, PNR, seat and platform data are not connected because Indian Railways has no free public data feed. Use the official <a href="https://enquiry.indianrail.gov.in/ntes/" target="_blank" rel="noopener">NTES</a> site for live information.</p>';
   function stName(m, c) { return (m.s[c] || c); }
   function sOpt(m, c) { return stName(m, c) + ' (' + c + ')'; }
@@ -97,6 +97,7 @@
     var k = Object.keys(m.s).filter(function (c) { return m.s[c].toLowerCase() === q.toLowerCase(); }); return k[0] || null;
   }
   function suggest() {
+    if (!document.querySelector('input[data-suggest]')) return;
     meta().then(function (m) {
       if (!m) return;
       document.querySelectorAll('input[data-suggest]').forEach(function (inp) {
@@ -115,7 +116,10 @@
       });
     });
   }
-  function trainLink(t) { return '<a href="live-train-status.html?train=' + t[0] + '"><b>' + t[0] + '</b> ' + esc(t[1]) + '</a>'; }
+  /* keep slug() identical to slug() in tools/build_site.py; freight entries have no static page */
+  function slug(s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60).replace(/-+$/, ''); }
+  function trainUrl(t) { return /cargo|parcel/i.test(t[1]) ? BASE + 'live-train-status.html?train=' + t[0] : BASE + 'train/' + t[0] + '-' + slug(t[1]) + '.html'; }
+  function trainLink(t) { return '<a href="' + trainUrl(t) + '"><b>' + t[0] + '</b> ' + esc(t[1]) + '</a>'; }
   var API = window.WIMT_API || '';
 
   /* ---------- page controllers ---------- */
@@ -140,7 +144,7 @@
         out.innerHTML = '<div class="card"><h2 style="margin-top:0">' + t[0] + ' ' + esc(t[1]) + ' <span class="pill">' + esc(typeName(t[2])) + '</span></h2>' +
           '<p>' + esc(stName(m, t[3])) + ' (' + t[5] + ') → ' + esc(stName(m, t[4])) + ' (' + t[6] + ') · ' + t[7] + ' km · ' + halts + ' halts' + (t[8] ? ' · Return train <a href="live-train-status.html?train=' + t[8] + '">' + t[8] + '</a>' : '') + '</p>' +
           '<p><b>Runs on:</b> ' + daysHtml(t[9]) + '</p>' + until(t) + '<div id="xtra"></div>' + (halts < stops.length ? '<label style="display:flex;gap:8px;align-items:center;font-weight:600"><input type="checkbox" id="allst" style="width:auto"> Show passing stations (' + stops.length + ')</label>' : '') + '<div id="tt">' + timetable(m, t, stops, false) + '</div>' + NOTE +
-          '<p><a class="btn ghost" href="coach-position.html">Coach position</a> <a class="btn ghost" href="seat-availability.html">Seats</a> <a class="btn ghost" href="pnr-status.html">PNR</a></p></div>';
+          '<p><a class="btn ghost" href="' + trainUrl(t) + '">Full train page</a> <a class="btn ghost" href="coach-position.html">Coach position</a> <a class="btn ghost" href="seat-availability.html">Seats</a> <a class="btn ghost" href="pnr-status.html">PNR</a></p></div>';
         if ($('#allst')) $('#allst').addEventListener('change', function (e) { $('#tt').innerHTML = timetable(m, t, stops, e.target.checked); });
         if (extra) extra(t, $('#xtra'));
       });

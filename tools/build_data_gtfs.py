@@ -13,7 +13,7 @@ rd = lambda f: csv.DictReader(open(os.path.join(src, f), encoding='utf-8'))
 DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 def mins(t):
-    h, m, _ = t.split(':'); return int(h) * 60 + int(m)
+    h, m = t.split(':')[:2]; return int(h) * 60 + int(m)
 def title(s):
     s = re.sub(r'\s+', ' ', s.strip()).title()
     return re.sub(r'\b(Jn|Cst|Cstm|Ltt|Ndls)\b', lambda m: m.group(1).upper() if m.group(1) != 'Jn' else 'Jn', s)
@@ -44,8 +44,13 @@ rname = {r['route_id']: r['route_long_name'] for r in rd('routes.txt')}
 trip = {r['trip_id']: r for r in rd('trips.txt')}
 oldname = {t[0]: t for t in old['t']} if old else {}
 
+CAL = {}
+if os.path.exists(os.path.join(src, 'calendar.txt')):
+    for r in rd('calendar.txt'):
+        CAL[r['service_id']] = (''.join(r[k] for k in ('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday')), r['start_date'], r['end_date'])
 def service(sid):
-    d, dates = sid.rsplit('_', 1)
+    if sid in CAL: return CAL[sid]
+    d, dates = sid.rsplit('_', 1)           # this feed encodes days+dates in service_id: Mon-Tue_20260101-20261231
     s, e = dates.split('-')
     return ''.join('1' if x in d.split('-') else '0' for x in DAYS), s, e
 
@@ -62,7 +67,7 @@ for no, tp in trip.items():
     if len(rs) < 2: continue
     stops = []
     for i, r in enumerate(rs):
-        a, d = mins(r['arrival_time']), mins(r['departure_time'])
+        a, d = mins(r['arrival_time'] or r['departure_time']), mins(r['departure_time'] or r['arrival_time'])
         first, last = i == 0, i == len(rs) - 1
         day = (a if last else d) // 1440 + 1
         stops.append([r['stop_id'], None if first else a % 1440, None if last else d % 1440, day, 1])
@@ -73,10 +78,10 @@ for no, tp in trip.items():
     f, l = rs[0], rs[-1]
     o = oldname.get(no)   # same number and same endpoints = same train: reuse its full (untruncated) name
     nm_out = o[1] if o and o[3] == f['stop_id'] and o[4] == l['stop_id'] else nice(nm, names)
-    km = int(float(l['shape_dist_traveled'] or 0))
+    km = int(float(l.get('shape_dist_traveled') or 0))
     fmt = lambda t: '%02d:%02d' % (mins(t) // 60 % 24, mins(t) % 60)
     until = e if e < '20270601' else ''
-    meta.append([no, nm_out, ttype(nm), f['stop_id'], l['stop_id'], fmt(f['departure_time']), fmt(l['arrival_time']), km, '', days, until])
+    meta.append([no, nm_out, ttype(nm), f['stop_id'], l['stop_id'], fmt(f['departure_time'] or f['arrival_time']), fmt(l['arrival_time'] or l['departure_time']), km, '', days, until])
 
 ix = {t[0]: t for t in meta}
 for t in meta:                       # guess return train: neighbouring number with reversed endpoints
@@ -87,11 +92,12 @@ for t in meta:                       # guess return train: neighbouring number w
 meta.sort()
 shutil.rmtree(out, ignore_errors=True); os.makedirs(out + '/tr'); os.makedirs(out + '/st')
 dump = lambda p, o: open(p, 'w', encoding='utf-8').write(json.dumps(o, separators=(',', ':'), ensure_ascii=False))
-fi = next(rd('feed_info.txt'))
+fi = next(rd('feed_info.txt'), None) if os.path.exists(os.path.join(src, 'feed_info.txt')) else None
+fi = fi or {'feed_version': today}
 dump(out + '/meta.json', {'s': {c: names.get(c, c) for c in used}, 't': meta,
-     'v': {'feed': fi['feed_version'], 'built': today, 'source': 'Neo2308/indianrailways-gtfs'}})
+     'v': {'feed': fi.get('feed_version') or today, 'built': today, 'source': 'Neo2308/indianrailways-gtfs'}})
 for k, v in trs.items(): dump(f'{out}/tr/{k}.json', v)
 sh = collections.defaultdict(dict)
 for c, v in sts.items(): sh[c[:2].upper()][c] = v
 for k, v in sh.items(): dump(f'{out}/st/{k}.json', v)
-print('trains', len(meta), 'stations', len(used), 'dropped expired', dropped, 'feed', fi['feed_version'])
+print('trains', len(meta), 'stations', len(used), 'dropped expired', dropped, 'feed', fi.get('feed_version'))
